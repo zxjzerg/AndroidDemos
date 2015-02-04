@@ -1,4 +1,3 @@
-
 package com.zxjdev.demo;
 
 import android.annotation.SuppressLint;
@@ -25,19 +24,16 @@ public class MainActivity extends Activity implements OnClickListener {
     private String mFileName;
     private MediaPlayer mPlayer;
     private SoundMeter mSoundMeter;
+    private Button mBtnAudio1;
+    private Button mBtnAudio2;
+    private Button mBtnAudio3;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mBtnStart = (Button) findViewById(R.id.btn_start);
-        mBtnStop = (Button) findViewById(R.id.btn_stop);
-        mBtnPlay = (Button) findViewById(R.id.btn_play);
-
-        mBtnStart.setOnClickListener(this);
-        mBtnStop.setOnClickListener(this);
-        mBtnPlay.setOnClickListener(this);
+        initViews();
 
         File rootCache = getExternalCacheDir();
         if (rootCache == null) {
@@ -55,6 +51,22 @@ public class MainActivity extends Activity implements OnClickListener {
         Log.d(TAG, "cache file: " + mFileName);
     }
 
+    private void initViews() {
+        mBtnStart = (Button) findViewById(R.id.btn_start);
+        mBtnStop = (Button) findViewById(R.id.btn_stop);
+        mBtnPlay = (Button) findViewById(R.id.btn_play);
+        mBtnAudio1 = (Button) findViewById(R.id.btn_audio_1);
+        mBtnAudio2 = (Button) findViewById(R.id.btn_audio_2);
+        mBtnAudio3 = (Button) findViewById(R.id.btn_audio_3);
+
+        mBtnStart.setOnClickListener(this);
+        mBtnStop.setOnClickListener(this);
+        mBtnPlay.setOnClickListener(this);
+        mBtnAudio1.setOnClickListener(this);
+        mBtnAudio2.setOnClickListener(this);
+        mBtnAudio3.setOnClickListener(this);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -66,6 +78,15 @@ public class MainActivity extends Activity implements OnClickListener {
                 break;
             case R.id.btn_play:
                 startPlaying();
+                break;
+            case R.id.btn_audio_1:
+                playAudio(R.raw.audio1);
+                break;
+            case R.id.btn_audio_2:
+                playAudio(R.raw.audio2);
+                break;
+            case R.id.btn_audio_3:
+                playAudio(R.raw.audio3);
                 break;
             default:
                 break;
@@ -122,4 +143,32 @@ public class MainActivity extends Activity implements OnClickListener {
         }
     }
 
+    private void playAudio(int rawFile) {
+        mPlayer = MediaPlayer.create(getApplicationContext(), rawFile);
+        mPlayer.setOnCompletionListener(new OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mPlayer.reset();
+                mPlayer.release();
+                mPlayer = null;
+            }
+        });
+        mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e(TAG, "onError" + what + extra);
+                return false;
+            }
+        });
+        mPlayer.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
+        }
+    }
 }
