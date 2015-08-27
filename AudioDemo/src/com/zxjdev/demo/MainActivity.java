@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.zxjdev.demo.SoundMeter.RecordListener;
+import com.zxjdev.demo.MediaPlayerHelper.RecordListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private Button mBtnPlay;
     private String mFileName;
     private MediaPlayer mPlayer;
-    private SoundMeter mSoundMeter;
+    private MediaPlayerHelper mSoundMeter;
     private Button mBtnAudio1;
     private Button mBtnAudio2;
     private Button mBtnAudio3;
@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     @SuppressLint("InlinedApi")
     private void startRecording() {
-        mSoundMeter = new SoundMeter(mFileName);
+        mSoundMeter = new MediaPlayerHelper(mFileName);
         mSoundMeter.setRecordListener(new RecordListener() {
 
             @Override
@@ -144,23 +144,22 @@ public class MainActivity extends Activity implements OnClickListener {
     }
 
     private void playAudio(int rawFile) {
-        mPlayer = MediaPlayer.create(getApplicationContext(), rawFile);
-        mPlayer.setOnCompletionListener(new OnCompletionListener() {
+        final MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), rawFile);
+        mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                mPlayer.reset();
-                mPlayer.release();
-                mPlayer = null;
+                mediaPlayer.reset();
+                mediaPlayer.release();
             }
         });
-        mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 Log.e(TAG, "onError" + what + extra);
                 return false;
             }
         });
-        mPlayer.start();
+        mediaPlayer.start();
     }
 
     @Override

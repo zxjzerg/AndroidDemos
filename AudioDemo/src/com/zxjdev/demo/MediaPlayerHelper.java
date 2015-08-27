@@ -1,4 +1,3 @@
-
 package com.zxjdev.demo;
 
 import android.media.MediaRecorder;
@@ -9,8 +8,9 @@ import android.util.Log;
 
 import java.io.IOException;
 
-public class SoundMeter {
-    private static final String TAG = SoundMeter.class.getSimpleName();
+public class MediaPlayerHelper {
+
+    private static final String TAG = MediaPlayerHelper.class.getSimpleName();
     private static final double EMA_FILTER = 0.6;
     private static final int DEFAULT_MAX_DURATION = 60 * 1000;
 
@@ -21,11 +21,11 @@ public class SoundMeter {
 
     /** user SoundMeter(String path) instead **/
     @Deprecated
-    public SoundMeter() {
+    public MediaPlayerHelper() {
 
     }
 
-    public SoundMeter(String path) {
+    public MediaPlayerHelper(String path) {
         mPath = path;
         mRecorder = new MediaRecorder();
         if (TextUtils.isEmpty(mPath)) {
@@ -44,8 +44,9 @@ public class SoundMeter {
                 switch (what) {
                     case MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED:
                         Log.e(TAG, "Max duration reached");
-                        if (mListener != null)
+                        if (mListener != null) {
                             mListener.onMaxDuration();
+                        }
                         mRecorder.release();
                         break;
                 }
@@ -64,16 +65,19 @@ public class SoundMeter {
             mRecorder.prepare();
             mRecorder.start();
             mEMA = 0.0;
-            if (mListener != null)
+            if (mListener != null) {
                 mListener.onStart();
+            }
         } catch (IllegalStateException e) {
             Log.e(TAG, "error in start()", e);
-            if (mListener != null)
+            if (mListener != null) {
                 mListener.onError();
+            }
         } catch (IOException e) {
             Log.e(TAG, "error in start()", e);
-            if (mListener != null)
+            if (mListener != null) {
                 mListener.onError();
+            }
         }
     }
 
@@ -83,8 +87,9 @@ public class SoundMeter {
             mRecorder.release();
             mRecorder = null;
         }
-        if (mListener != null)
+        if (mListener != null) {
             mListener.onStop();
+        }
     }
 
     public void pause() {
@@ -94,10 +99,11 @@ public class SoundMeter {
     }
 
     public double getAmplitude() {
-        if (mRecorder != null)
+        if (mRecorder != null) {
             return (mRecorder.getMaxAmplitude() / 2700.0);
-        else
+        } else {
             return 0;
+        }
     }
 
     public double getAmplitudeEMA() {
@@ -107,6 +113,7 @@ public class SoundMeter {
     }
 
     interface RecordListener {
+
         void onStart();
 
         void onStop();
@@ -131,7 +138,8 @@ public class SoundMeter {
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mRecorder.setOutputFile(android.os.Environment.getExternalStorageDirectory() + "/plato/" + name);
+            mRecorder.setOutputFile(
+                    android.os.Environment.getExternalStorageDirectory() + "/plato/" + name);
             mRecorder.setMaxDuration(60 * 1000);
             mRecorder.setOnInfoListener(new OnInfoListener() {
 
