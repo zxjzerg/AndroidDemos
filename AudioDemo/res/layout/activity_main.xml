@@ -3,92 +3,99 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tv_record"
+        android:id="@+id/tv_mr_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="MediaRecorder录音"
+        android:text="@string/record_using_media_recorder"
         android:textSize="18sp" />
 
     <LinearLayout
-        android:id="@+id/llyt_record"
+        android:id="@+id/llyt_mr_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_record"
+        android:layout_below="@+id/tv_mr_record"
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_start"
+            android:id="@+id/btn_mr_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="开始" />
+            android:text="@string/start" />
 
         <Button
-            android:id="@+id/btn_stop"
+            android:id="@+id/btn_mr_stop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="结束" />
+            android:text="@string/stop" />
 
         <Button
             android:id="@+id/btn_play"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="播放" />
+            android:text="@string/play" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_audio_record"
+        android:id="@+id/tv_ar_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llyt_record"
+        android:layout_below="@+id/llyt_mr_record"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="AudioRecord录音"
+        android:text="@string/record_using_audio_record"
         android:textSize="18sp" />
 
     <LinearLayout
-        android:id="@+id/llyt_audio_record"
+        android:id="@+id/llyt_ar_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_audio_record"
+        android:layout_below="@+id/tv_ar_record"
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_start_2"
+            android:id="@+id/btn_ar_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="开始" />
+            android:text="@string/start" />
 
         <Button
-            android:id="@+id/btn_stop_2"
+            android:id="@+id/btn_ar_stop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="结束" />
+            android:text="@string/stop" />
 
         <Button
-            android:id="@+id/btn_play_2"
+            android:id="@+id/btn_ar_play"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="播放" />
+            android:text="@string/play" />
+
+        <Button
+            android:id="@+id/btn_ar_suppress_noise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/suppress_noise" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llyt_audio_record"
+        android:layout_below="@+id/llyt_ar_record"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="播放示例语音"
+        android:text="@string/play_demo_audio"
         android:textSize="18sp" />
 
     <LinearLayout
@@ -104,21 +111,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="语音1" />
+            android:text="@string/audio_1" />
 
         <Button
             android:id="@+id/btn_audio_2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="语音2" />
+            android:text="@string/audio_2" />
 
         <Button
             android:id="@+id/btn_audio_3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="语音3" />
+            android:text="@string/audio_3" />
     </LinearLayout>
 
 </RelativeLayout>

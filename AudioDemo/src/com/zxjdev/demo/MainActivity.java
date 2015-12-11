@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,15 +19,21 @@ import java.io.IOException;
 public class MainActivity extends Activity implements OnClickListener {
 
     private static final String TAG = "AudioDemo";
-    private Button mBtnStart;
-    private Button mBtnStop;
-    private Button mBtnPlay;
+    private static final String AUDIO_DIR = Environment.getExternalStorageDirectory()
+            + "/AudioDemo/";
+
+    /** MediaRecorder操作按钮 */
+    private Button mBtnMrStart, mBtnMrStop, mBtnMrPlay;
+    /** AudioRecord操作按钮 */
+    private Button mBtnArStart, mBtnArStop, mBtnArPlay, mBtnArSuppressNoise;
+    /** 示例语音播放 */
+    private Button mBtnAudio1, mBtnAudio2, mBtnAudio3;
     private String mFileName;
     private MediaPlayer mPlayer;
-    private MediaPlayerHelper mSoundMeter;
-    private Button mBtnAudio1;
-    private Button mBtnAudio2;
-    private Button mBtnAudio3;
+    private MediaPlayerHelper mMrHelper;
+    private AudioRecordHelper mArHelper;
+
+    private boolean mSuppressNoise;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
@@ -49,35 +56,53 @@ public class MainActivity extends Activity implements OnClickListener {
         }
         mFileName = cacheDir.getAbsolutePath();
         Log.d(TAG, "cache file: " + mFileName);
+
+        File audioDir = new File(AUDIO_DIR);
+        if (!audioDir.exists()) {
+            if (!audioDir.mkdirs()) {
+                Log.e("createCacheDirs", "Directory not created");
+            }
+        }
+        mArHelper = new AudioRecordHelper();
     }
 
     private void initViews() {
-        mBtnStart = (Button) findViewById(R.id.btn_start);
-        mBtnStop = (Button) findViewById(R.id.btn_stop);
-        mBtnPlay = (Button) findViewById(R.id.btn_play);
+        mBtnMrStart = (Button) findViewById(R.id.btn_mr_start);
+        mBtnMrStop = (Button) findViewById(R.id.btn_mr_stop);
+        mBtnMrPlay = (Button) findViewById(R.id.btn_play);
         mBtnAudio1 = (Button) findViewById(R.id.btn_audio_1);
         mBtnAudio2 = (Button) findViewById(R.id.btn_audio_2);
         mBtnAudio3 = (Button) findViewById(R.id.btn_audio_3);
+        mBtnArStart = (Button) findViewById(R.id.btn_ar_start);
+        mBtnArStop = (Button) findViewById(R.id.btn_ar_stop);
+        mBtnArPlay = (Button) findViewById(R.id.btn_ar_play);
+        mBtnArSuppressNoise = (Button) findViewById(R.id.btn_ar_suppress_noise);
 
-        mBtnStart.setOnClickListener(this);
-        mBtnStop.setOnClickListener(this);
-        mBtnPlay.setOnClickListener(this);
+        mBtnMrStart.setOnClickListener(this);
+        mBtnMrStop.setOnClickListener(this);
+        mBtnMrPlay.setOnClickListener(this);
         mBtnAudio1.setOnClickListener(this);
         mBtnAudio2.setOnClickListener(this);
         mBtnAudio3.setOnClickListener(this);
+        mBtnArStart.setOnClickListener(this);
+        mBtnArStop.setOnClickListener(this);
+        mBtnArPlay.setOnClickListener(this);
+        mBtnArSuppressNoise.setOnClickListener(this);
+
+        mBtnArSuppressNoise.setText(mSuppressNoise ? "降噪开" : "降噪关");
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_start:
-                startRecording();
+            case R.id.btn_mr_start:
+                startMrRecording();
                 break;
-            case R.id.btn_stop:
-                stopRecording();
+            case R.id.btn_mr_stop:
+                stopMrRecording();
                 break;
             case R.id.btn_play:
-                startPlaying();
+                startMrPlaying(mFileName);
                 break;
             case R.id.btn_audio_1:
                 playAudio(R.raw.audio1);
@@ -88,19 +113,35 @@ public class MainActivity extends Activity implements OnClickListener {
             case R.id.btn_audio_3:
                 playAudio(R.raw.audio3);
                 break;
+            case R.id.btn_ar_start:
+                startArRecording();
+                break;
+            case R.id.btn_ar_stop:
+                stopArRecording();
+                break;
+            case R.id.btn_ar_play:
+                startArPlaying();
+                break;
+            case R.id.btn_ar_suppress_noise:
+                mSuppressNoise = !mSuppressNoise;
+                mBtnArSuppressNoise.setText(mSuppressNoise ? "降噪开" : "降噪关");
+                break;
             default:
                 break;
         }
     }
 
+    /** 使用MediaRecorder开始录制 */
     @SuppressLint("InlinedApi")
-    private void startRecording() {
-        mSoundMeter = new MediaPlayerHelper(mFileName);
-        mSoundMeter.setRecordListener(new RecordListener() {
+    private void startMrRecording() {
+        mBtnMrStart.setEnabled(false);
+        mMrHelper = new MediaPlayerHelper(mFileName);
+        mMrHelper.setRecordListener(new RecordListener() {
 
             @Override
             public void onStop() {
                 Log.d(TAG, "onStop()");
+                mBtnMrStart.setEnabled(true);
             }
 
             @Override
@@ -111,24 +152,28 @@ public class MainActivity extends Activity implements OnClickListener {
             @Override
             public void onMaxDuration() {
                 Log.d(TAG, "onMaxDuration()");
+                mBtnMrStart.setEnabled(true);
             }
 
             @Override
             public void onError() {
                 Log.d(TAG, "onError()");
+                mBtnMrStart.setEnabled(true);
             }
         });
-        mSoundMeter.start();
+        mMrHelper.start();
     }
 
-    private void stopRecording() {
-        mSoundMeter.stop();
+    /** 停止MediaRecorder录制 */
+    private void stopMrRecording() {
+        mMrHelper.stop();
     }
 
-    private void startPlaying() {
+    /** 播放MediaRecorder音频 */
+    private void startMrPlaying(String path) {
         mPlayer = new MediaPlayer();
         try {
-            mPlayer.setDataSource(mFileName);
+            mPlayer.setDataSource(path);
             mPlayer.prepare();
             Log.d(TAG, "audio time: " + mPlayer.getDuration());
             mPlayer.start();
@@ -141,6 +186,20 @@ public class MainActivity extends Activity implements OnClickListener {
         } catch (IOException e) {
             Log.e(TAG, "prepare() failed");
         }
+    }
+
+    private void startArRecording() {
+        mBtnArStart.setEnabled(false);
+        mArHelper.start(AUDIO_DIR + "voice8K16bitmono.pcm", mSuppressNoise);
+    }
+
+    private void stopArRecording() {
+        mArHelper.stop(AUDIO_DIR + "voice8K16bitmono.amr");
+        mBtnArStart.setEnabled(true);
+    }
+
+    private void startArPlaying() {
+        startMrPlaying(AUDIO_DIR + "voice8K16bitmono.amr");
     }
 
     private void playAudio(int rawFile) {

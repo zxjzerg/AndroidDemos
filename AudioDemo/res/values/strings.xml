@@ -3,5 +3,15 @@
 
     <string name="app_name">AudioDemo</string>
     <string name="hello_world">Hello world!</string>
+    <string name="record_using_media_recorder">MediaRecorder录音</string>
+    <string name="start">开始</string>
+    <string name="stop">结束</string>
+    <string name="play">播放</string>
+    <string name="record_using_audio_record">AudioRecord录音</string>
+    <string name="play_demo_audio">播放示例语音</string>
+    <string name="audio_1">语音1</string>
+    <string name="audio_2">语音2</string>
+    <string name="audio_3">语音3</string>
+    <string name="suppress_noise">降噪</string>
 
 </resources>
