@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.zxjdev.github.demo"
+<manifest
+    package="com.zxjdev.github.demo"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
@@ -15,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FirstActivity" />
     </application>
 
 </manifest>
